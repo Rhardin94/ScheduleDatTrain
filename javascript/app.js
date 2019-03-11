@@ -68,6 +68,6 @@ database.ref("/train-data").on("child_added", function (update) {
     newRow.append(minutesAway);
     $(".tables-body").append(newRow);
     if (update.val().currentTime > update.val().nextArrival) {
-        $(".tables-body").empty();
+        $(this).newRow.empty();
     }
 });
