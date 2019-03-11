@@ -43,4 +43,20 @@ $("#submit").on("click", function() {
         minutesLeft: tMinutesTillTrain,
         nextTrain: nextTrain,
     })
+    /*Function that runs whenever database values change
+    and adds new table row with calculated data*/
+    database.ref("/train-data").on("value", function(update) {
+        let newRow = $("<trow>");
+        let tName = $("<td>").text(trainName);
+        let tDestination = $("<td>").text(trainDestination);
+        let tFrequency = $("<td>").text(trainFrequency);
+        let nextArrival = $("<td>").text(nextTrain);
+        let minutesAway = $("<td>").text(minutesLeft);
+        newRow.append(tName);
+        newRow.append(tDestination);
+        newRow.append(tFrequency);
+        newRow.append(nextArrival);
+        newRow.append(minutesAway);
+        $(".table-body").append(newRow);
+    })
 })
