@@ -34,7 +34,7 @@ $("#submit").on("click", function (event) {
     //Calculates time of next train
     let nextTrain = moment().add(tMinutesTillTrain, "minutes").format("hh:mm");
     //Adding the data to firebase
-    database.ref("/train-data").set({
+    database.ref("/train-data").push({
         trainName: train,
         trainDestination: destination,
         firstTrain: time,
@@ -45,6 +45,7 @@ $("#submit").on("click", function (event) {
         minutesLeft: tMinutesTillTrain,
         nextTrain: nextTrain,
     })
+    //Clears the texboxes
     $("#train-name").val("");
     $("#destination").val("");
     $("#first-train-time").val("");
@@ -52,7 +53,7 @@ $("#submit").on("click", function (event) {
 });
 /*Function that runs whenever database values change
 and adds new table row with calculated data*/
-database.ref("/train-data").on("value", function (update) {
+database.ref("/train-data").on("child_added", function (update) {
     let newRow = $("<tr>");
     let tName = $("<td>").text(update.val().trainName);
     tName.attr("scope", "row");
@@ -66,4 +67,7 @@ database.ref("/train-data").on("value", function (update) {
     newRow.append(nextArrival);
     newRow.append(minutesAway);
     $(".tables-body").append(newRow);
+    if (update.val().currentTime > update.val().nextArrival) {
+        $(".tables-body").empty();
+    }
 });
