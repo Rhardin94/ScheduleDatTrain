@@ -10,7 +10,9 @@ const config = {
 firebase.initializeApp(config);
 //Reference database
 const database = firebase.database();
-$("#submit").on("click", function() {
+$("#submit").on("click", function (event) {
+    //Prevents submit from refreshing page
+    event.preventDefault();
     //Captures Name of Train
     let train = $("#train-name").val();
     //Captures destination of train
@@ -32,10 +34,10 @@ $("#submit").on("click", function() {
     //Calculates time of next train
     let nextTrain = moment().add(tMinutesTillTrain, "minutes").format("hh:mm");
     //Adding the data to firebase
-    database.ref("/train-data").push({
+    database.ref("/train-data").set({
         trainName: train,
         trainDestination: destination,
-        firstTrain: timeConverted,
+        firstTrain: time,
         trainFrequency: frequency,
         currentTime: currentTime,
         timeDifference: timeDiff,
@@ -43,20 +45,25 @@ $("#submit").on("click", function() {
         minutesLeft: tMinutesTillTrain,
         nextTrain: nextTrain,
     })
-    /*Function that runs whenever database values change
-    and adds new table row with calculated data*/
-    database.ref("/train-data").on("value", function(update) {
-        let newRow = $("<trow>");
-        let tName = $("<td>").text(trainName);
-        let tDestination = $("<td>").text(trainDestination);
-        let tFrequency = $("<td>").text(trainFrequency);
-        let nextArrival = $("<td>").text(nextTrain);
-        let minutesAway = $("<td>").text(minutesLeft);
-        newRow.append(tName);
-        newRow.append(tDestination);
-        newRow.append(tFrequency);
-        newRow.append(nextArrival);
-        newRow.append(minutesAway);
-        $(".table-body").append(newRow);
-    })
-})
+    $("#train-name").val("");
+    $("#destination").val("");
+    $("#first-train-time").val("");
+    $("#frequency").val("");
+});
+/*Function that runs whenever database values change
+and adds new table row with calculated data*/
+database.ref("/train-data").on("value", function (update) {
+    let newRow = $("<tr>");
+    let tName = $("<td>").text(update.val().trainName);
+    tName.attr("scope", "row");
+    let tDestination = $("<td>").text(update.val().trainDestination);
+    let tFrequency = $("<td>").text(update.val().trainFrequency);
+    let nextArrival = $("<td>").text(update.val().nextTrain);
+    let minutesAway = $("<td>").text(update.val().minutesLeft);
+    newRow.append(tName);
+    newRow.append(tDestination);
+    newRow.append(tFrequency);
+    newRow.append(nextArrival);
+    newRow.append(minutesAway);
+    $(".tables-body").append(newRow);
+});
