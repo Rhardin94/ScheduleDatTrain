@@ -14,13 +14,13 @@ $("#submit").on("click", function (event) {
     //Prevents submit from refreshing page
     event.preventDefault();
     //Captures Name of Train
-    let train = $("#train-name").val();
+    let train = $("#train-name").val().trim();
     //Captures destination of train
-    let destination = $("#destination").val();
+    let destination = $("#destination").val().trim();
     //Captures time of first train
-    let time = $("#first-train-time").val();
+    let time = $("#first-train-time").val().trim();
     //Captures frequency of train
-    let frequency = $("#frequency").val();
+    let frequency = $("#frequency").val().trim();
     //Converts the time so it comes before current time
     let timeConverted = moment(time, "HH:mm").subtract(1, "years");
     //Captures the current time
@@ -33,8 +33,8 @@ $("#submit").on("click", function (event) {
     let tMinutesTillTrain = frequency - tRemaining;
     //Calculates time of next train
     let nextTrain = moment().add(tMinutesTillTrain, "minutes").format("hh:mm");
-    //Adding the data to firebase
-    database.ref("/train-data").push({
+    //Temporary object for the data
+    let trainData = {
         trainName: train,
         trainDestination: destination,
         firstTrain: time,
@@ -44,7 +44,9 @@ $("#submit").on("click", function (event) {
         timeBetween: tRemaining,
         minutesLeft: tMinutesTillTrain,
         nextTrain: nextTrain,
-    })
+    };
+    //Adding the data to firebase
+    database.ref("/train-data").push(trainData);
     //Clears the texboxes
     $("#train-name").val("");
     $("#destination").val("");
@@ -53,7 +55,7 @@ $("#submit").on("click", function (event) {
 });
 /*Function that runs whenever database values change
 and adds new table row with calculated data*/
-database.ref("/train-data").on("child_added", function (update) {
+database.ref("/train-data").on("child_added", function(update) {
     let newRow = $("<tr>");
     let tName = $("<td>").text(update.val().trainName);
     tName.attr("scope", "row");
@@ -61,6 +63,7 @@ database.ref("/train-data").on("child_added", function (update) {
     let tFrequency = $("<td>").text(update.val().trainFrequency);
     let nextArrival = $("<td>").text(update.val().nextTrain);
     let minutesAway = $("<td>").text(update.val().minutesLeft);
+    update.val().currentTime = moment().format("hh:mm");
     newRow.append(tName);
     newRow.append(tDestination);
     newRow.append(tFrequency);
