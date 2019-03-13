@@ -1,69 +1,95 @@
 // Initialize Firebase
 const config = {
-    apiKey: "AIzaSyCuh8LmWDUI6tyuyU4qx2RXnTgRqwH-ll8",
-    authDomain: "train-schedules-e7aef.firebaseapp.com",
-    databaseURL: "https://train-schedules-e7aef.firebaseio.com",
-    projectId: "train-schedules-e7aef",
-    storageBucket: "",
-    messagingSenderId: "762110917052"
+  apiKey: "AIzaSyCuh8LmWDUI6tyuyU4qx2RXnTgRqwH-ll8",
+  authDomain: "train-schedules-e7aef.firebaseapp.com",
+  databaseURL: "https://train-schedules-e7aef.firebaseio.com",
+  projectId: "train-schedules-e7aef",
+  storageBucket: "",
+  messagingSenderId: "762110917052"
 };
 firebase.initializeApp(config);
 //Reference database
 const database = firebase.database();
 $("#submit").on("click", function (event) {
-    //Prevents submit from refreshing page
-    event.preventDefault();
-    //Captures Name of Train
-    let train = $("#train-name").val();
-    //Captures destination of train
-    let destination = $("#destination").val();
-    //Captures time of first train
-    let time = $("#first-train-time").val();
-    //Captures frequency of train
-    let frequency = $("#frequency").val();
-    //Converts the time so it comes before current time
-    let timeConverted = moment(time, "HH:mm").subtract(1, "years");
-    //Captures the current time
-    let currentTime = moment().format("hh:mm");
-    //Calculates the difference between current time and first train time
-    let timeDiff = moment().diff(moment(timeConverted), "minutes");
-    //Calculates time between trains
-    let tRemaining = timeDiff % frequency;
-    //Calculates minutes until next train
-    let tMinutesTillTrain = frequency - tRemaining;
-    //Calculates time of next train
-    let nextTrain = moment().add(tMinutesTillTrain, "minutes").format("hh:mm");
-    //Adding the data to firebase
-    database.ref("/train-data").set({
-        trainName: train,
-        trainDestination: destination,
-        firstTrain: time,
-        trainFrequency: frequency,
-        currentTime: currentTime,
-        timeDifference: timeDiff,
-        timeBetween: tRemaining,
-        minutesLeft: tMinutesTillTrain,
-        nextTrain: nextTrain,
-    })
-    $("#train-name").val("");
-    $("#destination").val("");
-    $("#first-train-time").val("");
-    $("#frequency").val("");
+  //Prevents submit from refreshing page
+  event.preventDefault();
+  //Captures Name of Train
+  let train = $("#train-name").val().trim();
+  //Captures destination of train
+  let destination = $("#destination").val().trim();
+  //Captures time of first train
+  let firstTime = $("#first-train-time").val().trim();
+  //Captures frequency of train
+  let frequency = $("#frequency").val().trim();
+  //Temporary object for the data
+  let trainData = {
+    trainName: train,
+    trainDestination: destination,
+    firstTrain: firstTime,
+    trainFrequency: frequency,
+  };
+  //Adding the data to firebase
+  database.ref("/train-data").push(trainData);
+  //Clears the texboxes
+  $("#train-name").val("");
+  $("#destination").val("");
+  $("#first-train-time").val("");
+  $("#frequency").val("");
 });
+/* Trying to loop through firebase with these 
+let query = database.ref("train-data").orderByKey();
+query.once("child_added").then
+snapshot.forEach(function (childSnapshot) {
+    let key = childSnapshot.key;
+    let childData = childSnapshot.val();
 /*Function that runs whenever database values change
 and adds new table row with calculated data*/
-database.ref("/train-data").on("value", function (update) {
-    let newRow = $("<tr>");
-    let tName = $("<td>").text(update.val().trainName);
-    tName.attr("scope", "row");
-    let tDestination = $("<td>").text(update.val().trainDestination);
-    let tFrequency = $("<td>").text(update.val().trainFrequency);
-    let nextArrival = $("<td>").text(update.val().nextTrain);
-    let minutesAway = $("<td>").text(update.val().minutesLeft);
-    newRow.append(tName);
-    newRow.append(tDestination);
-    newRow.append(tFrequency);
-    newRow.append(nextArrival);
-    newRow.append(minutesAway);
-    $(".tables-body").append(newRow);
-});
+//Interval that runs every second checking for database changes, updates every minute as calculations change
+let snapshotInterval = setInterval(function () {
+  //Clears the table of duplicates before reappending them below each time the snapshot runs
+  $(".tables-body").empty();
+      /*Function that runs whenever database a child is added to train-data directory in firebase 
+      and adds new table row with calculated data*/
+      database.ref("/train-data").on("child_added", function(snapshot) {
+          //Captures the snapshotted data in variables again
+          let trainName = snapshot.val().trainName;
+          let trainDestination = snapshot.val().trainDestination;
+          let firstTrain = snapshot.val().firstTrain;
+          let trainFrequency = snapshot.val().trainFrequency;
+          //Converts the time so it comes before current time
+          let timeConverted = moment(firstTrain, "HH:mm").subtract(1, "years");
+          //Captures current time in a variable
+          let currentTime = moment();
+          //Calculates the difference between current time and first train time
+          let timeDiff = currentTime.diff(moment(timeConverted), "minutes");
+          //Calculates time between trains
+          let tRemaining = timeDiff % trainFrequency;
+          //Calculates minutes until next train
+          let tMinutesTillTrain = trainFrequency - tRemaining;
+          //Calculates time of next train
+          let nextTrain = currentTime.add(tMinutesTillTrain, "minutes").format("hh:mm");
+          //Creates the new table row for the calculated data
+          let newRow = $("<tr>");
+          //Creating table data with trainName variable
+          let tName = $("<td>").text(trainName);
+          //Attaching scope of "row" for bootstrap styling
+          tName.attr("scope", "row");
+          //Creates table data for trainDestination variable
+          let tDestination = $("<td>").text(trainDestination);
+          //Creates table data for trainFrequency variable
+          let tFrequency = $("<td>").text(trainFrequency);
+          //Creates table data for nextTrain variable
+          let nextArrival = $("<td>").text(nextTrain);
+          //Creates table data for tMinutesTillTrain variable
+          let minutesAway = $("<td>").text(tMinutesTillTrain);
+          //Appends the new <td> tags to the newRow variable
+          newRow.append(tName);
+          newRow.append(tDestination);
+          newRow.append(tFrequency);
+          newRow.append(nextArrival);
+          newRow.append(minutesAway);
+          //Appends the newRow with all the data inside to the table body.
+          $(".tables-body").append(newRow);
+        })
+        //Runs the snapshot every second
+      }, 1000);
