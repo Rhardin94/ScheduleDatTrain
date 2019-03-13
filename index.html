@@ -17,18 +17,18 @@
     <!--Div that holds everything-->
     <div class="container">
       <!--Opening crawl-->
-      <div class="jumbotron bg-success text-white border border-warning">
-        <h1 class="text-center">Schedule da Trains!</h1>
+      <div class="jumbotron bg-warning text-white border border-warning">
+        <h1 class="text-center">Oi! When's the next train?</h1>
       </div>
       <!--Div that holds the current schedules stored in firebase-->
-      <div class="row mb-1">
-        <div class="col-lg-12">
+      <div class="row mt-3 mb-3">
+        <div class="col-lg-8">
           <div class="card card-default border border-warning">
             <!--Div that holds he current schedules-->
-            <div class="card-header bg-success text-white">
+            <div class="card-header bg-warning text-white">
               <p class="font-weight-bold text-center">Current Schedules:</p>
             </div>
-            <div class="card-body bg-secondary text-white">
+            <div class="card-body text-white bg-secondary">
               <table class="table table-striped table-responsive-sm table-bordered table-dark">
                 <thead>
                   <tr class="font-weight-bold">
@@ -45,39 +45,42 @@
             </div>
           </div>
         </div>
-      </div>
       <!--Div that holds the form for submitting a schedule request-->
-      <div class="row mt-3 mb-3">
-        <div class="col-lg-12">
+      
+        <div class="col-lg-4">
           <div class="card card-default border border-warning">
-            <div class="card-header bg-success text-white">
+            <div class="card-header bg-warning text-white">
               <p class="font-weight-bold text-center">Add a Schedule:</p>
             </div>
             <div class="card-body bg-secondary text-white">
               <form>
                 <div class="form-group row">
                   <label for="train-name">Train Name</label>
-                  <input class="form-control border border-warning" id="train-name" type="text">
+                  <input class="form-control border border-warning bg-dark text-white" id="train-name" type="text">
                 </div>
                 <div class="form-group row">
                   <label for="desitination">Destination</label>
-                  <input class="form-control border border-warning" id="destination" type="text">
+                  <input class="form-control border border-warning bg-dark text-white" id="destination" type="text">
                 </div>
                 <div class="form-group row">
                   <label for="first-train-time">First Train Time(HH:mm - military time)</label>
-                  <input class="form-control border border-warning" id="first-train-time" type="text">
+                  <input class="form-control border border-warning bg-dark text-white" id="first-train-time" type="text">
                 </div>
                 <div class="form-group row">
                   <label for="frequency">Frequency (min)</label>
-                  <input class="form-control border border-warning" id="frequency" type="number">
+                  <input class="form-control border border-warning bg-dark text-white" id="frequency" type="number">
                 </div>
-                <button class="btn btn-success" id="submit">Search</button>
+                <button class="btn btn-warning" id="submit">Search</button>
               </form>
             </div>
           </div>
         </div>
       </div>
-    </div>
+      <footer class="fixed-bottom border-top border-warning">
+        <div class="container-fluid mt-auto d-flex justify-content-center bg-secondary text-white p-2">
+          <span class="footer-text text-white">Copyright &copy; 2019 Robert Hardin</span>
+        </div>
+      </footer>
     <!--jQuery-->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <!-- Bootstrap CDN-->
