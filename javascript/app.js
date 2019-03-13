@@ -44,9 +44,12 @@ snapshot.forEach(function (childSnapshot) {
     let childData = childSnapshot.val();
 /*Function that runs whenever database values change
 and adds new table row with calculated data*/
-//Also trying to add an interval to run the snapshot every minute
+//Interval that runs every second checking for database changes, updates every minute as calculations change
 let snapshotInterval = setInterval(function () {
+  //Clears the table of duplicates before reappending them below each time the snapshot runs
   $(".tables-body").empty();
+      /*Function that runs whenever database a child is added to train-data directory in firebase 
+      and adds new table row with calculated data*/
       database.ref("/train-data").on("child_added", function(snapshot) {
           //Captures the snapshotted data in variables again
           let trainName = snapshot.val().trainName;
@@ -67,17 +70,26 @@ let snapshotInterval = setInterval(function () {
           let nextTrain = currentTime.add(tMinutesTillTrain, "minutes").format("hh:mm");
           //Creates the new table row for the calculated data
           let newRow = $("<tr>");
+          //Creating table data with trainName variable
           let tName = $("<td>").text(trainName);
+          //Attaching scope of "row" for bootstrap styling
           tName.attr("scope", "row");
+          //Creates table data for trainDestination variable
           let tDestination = $("<td>").text(trainDestination);
+          //Creates table data for trainFrequency variable
           let tFrequency = $("<td>").text(trainFrequency);
+          //Creates table data for nextTrain variable
           let nextArrival = $("<td>").text(nextTrain);
+          //Creates table data for tMinutesTillTrain variable
           let minutesAway = $("<td>").text(tMinutesTillTrain);
+          //Appends the new <td> tags to the newRow variable
           newRow.append(tName);
           newRow.append(tDestination);
           newRow.append(tFrequency);
           newRow.append(nextArrival);
           newRow.append(minutesAway);
+          //Appends the newRow with all the data inside to the table body.
           $(".tables-body").append(newRow);
         })
+        //Runs the snapshot every second
       }, 1000);
