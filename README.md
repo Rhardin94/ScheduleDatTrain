@@ -1,15 +1,32 @@
 # ScheduleDatTrain
-## ScheduleDatTrain is a jQuery powered project that utilizes moment.js
-* The user may submit a train schedule through the form on the bottom of the page,
-    * The search parameters specifically consist of:
-    1. Train Name
-    2. Destination
-    3. First Train Time (HH:mm in military time)
-    4. Frequency (in minutes)
-* After the users submits the search, we capture the data within firebase and covert it using moment.js to display in a new row within the table above the specific train that was searched for:
-    * The table shows the converted data as:
-    1. Train Name
-    2. Destination
-    3. Frequency (min)
-    4. Next Arrival
-    5. How Many Minutes away (from the current time)
+### Link to app found here: "https://rhardin94.github.io/ScheduleDatTrain/"
+## Overview
+ScheduleDatTrain is a jQuery app utilizing firebase to dynamically track user-created train schedules. The user is presented a simple layout that shows the current train schedules on the left side of the screen and a form to add new schedules on the right. To add a new schedule, the user may fill out the form with required information, then the algorithm in app.js with convert the time given until the next train (and dynamically update minutes remaining via firebase and moment.js).
+
+## How to use
+
+On first visiting the site, the user is presented with the single page app.
+
+![homepage containing current train schedules and a form to add new ones](/assets/screenshots/home.jpg)
+
+The user may view current schedules on the left hand side of the screen.
+
+![current schedules table, listing each train's name, destination, frequency, next arrival, and minutes away](/assets/screenshots/current.jpg)
+
+If the user wishes to add a new schedule, they may do so by filling out the required fields in the form on the right of the screen.
+
+![Add new schedule form that requires name, destination, first train time, and frequency](/assets/screenshots/add.jpg)
+
+Once the user has filled out each input field, they may hit the search button to retrieve the new schedule.
+
+![filled out add new schedule form](/assets/screenshots/new.jpg)
+![search button](/assets/screenshots/search.jpg)
+
+After hitting the search button, the algorithm in app.js will actively populate the current schedules based on given information
+
+![new schedule added to current schedules table](/assets/screenshots/added.jpg)
+
+## Tech
+* [Moment.js](https://momentjs.com/)
+* [Firebase](https://firebase.google.com/?gclid=Cj0KCQjw3uboBRDCARIsAO2XcYAHXHyJ2OK79yAcdES-9rXxIyN6HvswNcnjW0TTWNzzKYCjax3_6bwaAmhPEALw_wcB)
+* [jQuery](https://jquery.com/)
